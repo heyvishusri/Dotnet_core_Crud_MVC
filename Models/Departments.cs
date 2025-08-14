@@ -8,6 +8,6 @@ namespace WebAppDotNetCoreCrudNew.Models
         public int ID { get; set; }
 
         
-        public int Department { get; set; }
+        public string DeptName { get; set; }
     }
 }

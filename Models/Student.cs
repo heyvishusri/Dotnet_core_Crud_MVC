@@ -29,6 +29,6 @@ namespace WebAppDotNetCoreCrudNew.Models
         public int DepID { get; set; }
 
         [NotMapped]
-        public string Department { get; set; }
+        public string DeptName { get; set; }
     }
 }

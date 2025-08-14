@@ -9,6 +9,6 @@ namespace WebAppDotNetCoreCrudNew.Models
             
         }
         public DbSet<Student> Student { get; set; }
-        public DbSet<Departments> Departments { get; set; }
+        public DbSet<Departments> Department { get; set; }
     }
 }
