@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WebAppDotNetCoreCrudNew.Models;
 
 namespace WebAppDotNetCoreCrudNew.Controllers
@@ -39,10 +40,10 @@ namespace WebAppDotNetCoreCrudNew.Controllers
             }
         }
 
-        public IActionResult Create()
+        public IActionResult Create(Student obj)
         {
             LoadDDL();
-            return View();
+            return View(obj);
         }
 
         [HttpPost]
@@ -57,14 +58,20 @@ namespace WebAppDotNetCoreCrudNew.Controllers
                         _Db.Student.Add(obj);
                         await _Db.SaveChangesAsync();
                     }
-                    return RedirectToAction("StudentList"); // ✅ Will go to list after save
+                    else
+                    {
+                        _Db.Entry(obj).State = EntityState.Modified;
+                        await _Db.SaveChangesAsync();
+                    }
+
+                    return RedirectToAction("StudentList");
                 }
 
-                
                 return View(obj);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
                 return RedirectToAction("StudentList");
             }
         }
