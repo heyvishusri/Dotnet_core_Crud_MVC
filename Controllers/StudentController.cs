@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WebAppDotNetCoreCrudNew.Models;
 
 namespace WebAppDotNetCoreCrudNew.Controllers
@@ -10,28 +11,29 @@ namespace WebAppDotNetCoreCrudNew.Controllers
         {
             _Db = Db;
         }
+
         public IActionResult StudentList()
         {
             try
             {
                 var stdList = (from a in _Db.Student
-                                   join b in _Db.Department
-                                   on a.DepID equals b.ID into Dep
-                                   from b in Dep.DefaultIfEmpty()
-                                   select new Student
-                                   {
-                                       ID = a.ID,
-                                       Name = a.Name,
-                                       Fname = a.Fname,
-                                       Mobile = a.Mobile,
-                                       Email = a.Email,
-                                       Description = a.Description,
-                                       DepID = a.DepID,
-                                       DeptName = b != null ? b.DeptName.ToString() : ""
-                                   }).ToList();
+                               join b in _Db.Department
+                               on a.DepID equals b.ID into Dep
+                               from b in Dep.DefaultIfEmpty()
+                               select new Student
+                               {
+                                   ID = a.ID,
+                                   Name = a.Name,
+                                   Fname = a.Fname,
+                                   Mobile = a.Mobile,
+                                   Email = a.Email,
+                                   Description = a.Description,
+                                   DepID = a.DepID,
+                                   DeptName = b != null ? b.DeptName.ToString() : ""
+                               }).ToList();
                 return View(stdList);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return View();
             }
@@ -39,7 +41,7 @@ namespace WebAppDotNetCoreCrudNew.Controllers
 
         public IActionResult Create()
         {
-            loadDDL();
+            LoadDDL();
             return View();
         }
 
@@ -50,34 +52,35 @@ namespace WebAppDotNetCoreCrudNew.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (obj.ID==0)
+                    if (obj.ID == 0)
                     {
                         _Db.Student.Add(obj);
                         await _Db.SaveChangesAsync();
                     }
-                    
-                    return RedirectToAction("StudentList");
+                    return RedirectToAction("StudentList"); // ✅ Will go to list after save
                 }
+
+                
                 return View(obj);
-            } catch (Exception ex) 
+            }
+            catch (Exception)
             {
                 return RedirectToAction("StudentList");
             }
         }
 
-        private void loadDDL()
+        private void LoadDDL()
         {
             try
             {
-                List<Departments> depList = new List<Departments>();
-                depList = _Db.Department.ToList();
+                var depList = _Db.Department.ToList();
                 depList.Insert(0, new Departments { ID = 0, DeptName = "Please Select" });
                 ViewBag.DepList = depList;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ViewBag.DepList = null;
             }
-}
+        }
     }
 }
